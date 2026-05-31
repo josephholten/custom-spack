@@ -123,6 +123,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # Mumps is disabled by default, because it depends on Scalapack
     # which is not portable to all HPC systems
     variant("mumps", default=False, description="Activates support for MUMPS (only parallel)")
+    variant("pastix", default=False, description="PaStiX sparse direct solver")
     variant(
         "superlu-dist",
         default=False,
@@ -341,6 +342,13 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("mumps+mpi~int64+metis+parmetis~openmp", when="+mumps+metis~openmp")
     depends_on("mumps+mpi~int64~metis~parmetis+openmp", when="+mumps~metis+openmp")
     depends_on("mumps+mpi~int64+metis+parmetis+openmp", when="+mumps+metis+openmp")
+    depends_on("pastix", when="+pastix")
+    depends_on("pastix+mpi",   when="+pastix+mpi")
+    depends_on("pastix~mpi",   when="+pastix~mpi")
+    depends_on("pastix+int64", when="+pastix+int64")
+    depends_on("pastix~int64", when="+pastix~int64")
+    depends_on("pastix+metis", when="+pastix+metis")
+    depends_on("hwloc", when="+pastix")
     depends_on("scalapack", when="+mumps")
     depends_on("mkl", when="+mkl-pardiso")
     depends_on("fftw+mpi", when="+fftw+mpi")
@@ -539,6 +547,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("hdf5" + hdf5libs, "hdf5", True, True),
             ("zlib-api", "zlib", True, True),
             "mumps",
+            "pastix",
             ("fftw:mpi", "fftw", True, True),
             ("valgrind", "valgrind", False, False),
             "gmp",
